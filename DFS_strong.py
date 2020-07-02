@@ -46,8 +46,13 @@ class Node:
         return self.__leader
 
     def __str__(self):
-        return ("Node: %d, edges: "%self.get_vertex() + str(self.get_edges()) 
-                + " (leader: %d)"%self.get_leader() + " (fTime: %d)"%self.get_fTime())
+        return "Node: %d, edges: "%self.get_vertex() + str(self.get_edges())
+        
+#  Uncomment the code below if you want to check the leaders and finishing times (debug)
+#
+#        
+#        return ("Node: %d, edges: "%self.get_vertex() + str(self.get_edges()) 
+#                + " (leader: %d)"%self.get_leader() + " (fTime: %d)"%self.get_fTime())
 
 class Stack:
     """ requires deque from collection
@@ -71,6 +76,7 @@ def createNodes(vertices):
     """
     nodesObj = []
     index = 1;
+    nodeSet = set()
     
     for vertex in vertices:
         
@@ -82,10 +88,26 @@ def createNodes(vertices):
             nodesObj[index - 1].add_edge(int(vertex[1]))
         
         else:
+            k = int(vertex[0]) - index
+            for j in range(k-1):
+                index+=1
+                nodesObj.append(Node(index));
             index+=1
             nodesObj.append(Node(index));
             nodesObj[index - 1].add_edge(int(vertex[1]))
+            
+        nodeSet.add(int(vertex[1]))
+        
+    maxNode = max(nodeSet)
     
+    if len(nodesObj) < maxNode:
+        
+        k = maxNode - len(nodesObj)
+        for j in range(k):
+            index+=1
+            nodesObj.append(Node(index));
+        
+            
     return nodesObj
 
     
@@ -155,13 +177,21 @@ def reverseGraph(graph):
     for vertex in graph:
         
         nodeNumber = vertex.get_vertex()
+        edges = vertex.get_edges()
         
-        for arc in vertex.get_edges():
+
+        for arc in edges:
             
             if (revGraph[arc - 1] == 0):
                 revGraph[arc - 1] = Node(arc)
             
             revGraph[arc - 1].add_edge(nodeNumber)
+    
+    inx = 0    
+    for vertex in revGraph:
+        if vertex == 0:
+            revGraph[inx] = Node(inx + 1)
+        inx+=1
         
     return revGraph
 
@@ -220,15 +250,15 @@ def retrieveClusters(graph):
     
     return clusters
         
-    
 
 ## Header end ###         
        
 ## Testing ###
 
 test = True #change this boolean to disable testing (test = False)
+debug = False  #print intermediate steps
 
-if(test):
+if(test): #choose a graph for testing
     
     nodes = [  #testing graph
                 ['1','4'],
@@ -243,56 +273,90 @@ if(test):
                 ['9','3'],
             ]
     
+    nodes = [  #testing graph
+                ['1','2'],
+                ['1','3'],
+                ['3','4'],
+                ['4','1'],
+                ['4','5'],
+            ]
+    
+    nodes = [  #testing graph
+                ['1','2'],
+                ['2','3'],
+                ['2','4'],
+                ['3','1'],
+               
+            ]
+    
+    nodes = [ #testing graph
+                ['1','2'],
+                ['2','5'],
+                ['3','6'],
+                ['3','3'],
+                ['4','2'],
+                ['4','7'],
+                ['5','4'],
+                ['5','1'],
+                ['6','8'],
+                ['7','5'],
+                ['8','9'],
+                ['9','6']
+            ]
     graph = createNodes(nodes)
     
     print('graph:')
     for node in graph:
         print(node)
-        
+       
     revGraph = reverseGraph(graph)
     DFSloop(revGraph)
-    print('\nreversed graph:')
     
-    for node in revGraph:
-        print(node)
-        
-    print('\ncopied graph:')
-    
+    if(debug):
+        print('\nreversed graph:')
+        for node in revGraph:
+            print(node)
+            
     copyInfo(graph,revGraph)
-    for node in graph:
-        print(node)
     
-    print('\nordered list:')
+    if(debug):
+        print('\ncopied graph:')
+        for node in graph:
+            print(node)
     
     ordering = topologicList(graph)
-    print(ordering)
+    
+    if(debug):
+        print('\nordered list:')
+        print(ordering)
     
     DFSloop(graph,True, ordering)
     
-    print('\nclustered graph:')
-    for node in graph:
-        print(node)
+    if(debug):
+        print('\nclustered graph:')
+        for node in graph:
+            print(node)
         
     clusters =  retrieveClusters(graph) 
+    
     print('\nstrongly connected components:')
     print(clusters)
 
 
 ## Stanford's dataset ###
         
-"""
-with open('graph.txt') as f:
-    nodes = f.read().splitlines()
     
-#preprosesing nodes
-for i in range(len(nodes)):
-    nodes[i] = nodes[i].split()    
-    
-del i
-    
-graph = createNodes(nodes)
-del nodes
-"""
+#with open('graph.txt') as f:
+#    nodes = f.read().splitlines()
+#    
+##preprosesing nodes
+#for i in range(len(nodes)):
+#    nodes[i] = nodes[i].split()    
+#    
+#del i
+#    
+#graph = createNodes(nodes)
+#del nodes
 
     
     
