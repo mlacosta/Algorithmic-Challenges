@@ -2,8 +2,15 @@
 #Github: mlacosta
 #mail: marianoacosta.003@gmail.com
 #date: July 2nd 2020
+#
+#Compute Strongly Connected Components (sccs) in a directed Graph
+#
 
 from collections import deque
+
+test = False #change this boolean to enable testing (test = True)
+debug = False  #print intermediate steps
+dataset = True #calculate sccs on Stanford's dataset
 
 ## Header ###
 class Node:
@@ -12,7 +19,7 @@ class Node:
         self.__nodeNumber = nodeNumber;
         self.__edges = [];
         self.__explored = False;
-        self.__fTime = 0;
+        self.__fTime = 0; #finishing time
         self.__leader = 0;
     
     def set_nodeNumber(self,number):
@@ -46,13 +53,13 @@ class Node:
         return self.__leader
 
     def __str__(self):
-        return "Node: %d, edges: "%self.get_vertex() + str(self.get_edges())
+        # "Node: %d, edges: "%self.get_vertex() + str(self.get_edges())
         
 #  Uncomment the code below if you want to check the leaders and finishing times (debug)
-#
-#        
-#        return ("Node: %d, edges: "%self.get_vertex() + str(self.get_edges()) 
-#                + " (leader: %d)"%self.get_leader() + " (fTime: %d)"%self.get_fTime())
+
+        
+        return ("Node: %d, edges: "%self.get_vertex() + str(self.get_edges()) 
+                + " (leader: %d)"%self.get_leader() + " (fTime: %d)"%self.get_fTime())
 
 class Stack:
     """ requires deque from collection
@@ -64,15 +71,26 @@ class Stack:
         self.__stack.append(item)
     
     def pull(self):
-        return self.__stack.pop()
+        self.__stack.pop()
+    
+    def top(self):
+        return self.__stack[-1]
+    
+    def isEmpty(self):
+        if len(self.__stack) == 0:
+            return True
+        else:
+            return False
+    def __str__(self):
+        return str(self.__stack)
 
-def createNodes(vertices):
+def createGraph(vertices):
     """
     parameters:
-        vertices(list): list of [vertex,edges]
+        vertices(list): list of ['vertex','edge']
         
     returns:
-        a list of Node objects
+        a list of Node objects (a directed Graph)
     """
     nodesObj = []
     index = 1;
@@ -88,8 +106,8 @@ def createNodes(vertices):
             nodesObj[index - 1].add_edge(int(vertex[1]))
         
         else:
-            k = int(vertex[0]) - index
-            for j in range(k-1):
+            k = int(vertex[0]) - index 
+            for j in range(k-1): #it detects sink nodes between 
                 index+=1
                 nodesObj.append(Node(index));
             index+=1
@@ -100,7 +118,7 @@ def createNodes(vertices):
         
     maxNode = max(nodeSet)
     
-    if len(nodesObj) < maxNode:
+    if len(nodesObj) < maxNode: #if there's any sink node left behind
         
         k = maxNode - len(nodesObj)
         for j in range(k):
@@ -116,11 +134,16 @@ def DFSloop(graph,useOrder = False, ordering = [], useStack = False):
         parameters:
             graph (list): A list of Node objects
             useOrder (bool): If true then searches the graph according
-                             to a topological order given by 'ordering'
-            ordering (list): Node labels in increasing topological order
+                             to a specific order given by 'ordering'.
+                             Default: disabled (False).
+            ordering (list): Node labels in increasing order. 
+                             Default: empty list
+            useStack (bool): Activate it in case of a stack overflow due 
+                             to recursion. Default: disabled (False).
         returns:
-            Set finished times (fTime) and leaders for each node
+            Sets finished times (fTime) and leaders for each node in graph
     """    
+    stack = Stack();
     size = len(graph)
     fTime = 0
     leader = 0
@@ -131,12 +154,62 @@ def DFSloop(graph,useOrder = False, ordering = [], useStack = False):
             inx = ordering[i] - 1
         else:
             inx = i
-        
-        if not(graph[inx].isExplored()): #if node is not yet explored
+            
+        if not(graph[inx].isExplored()):
+            
             leader = graph[inx].get_vertex() #node number
-            fTime = DFS(graph,inx,fTime,leader,size)
-    
-    
+        
+            if(useStack):
+                
+                graph[inx].set_explored()
+                graph[inx].set_leader(leader)
+                stack.push(leader)
+                
+                stackInx = leader - 1
+                
+                finished = False
+                
+                while not(stack.isEmpty()):
+
+                
+                    while not(finished): #fill the stack
+#                        print(stack)
+                        counter = 0
+                        length = len(graph[stackInx].get_edges() )
+                        
+                        if length == 0:
+                            finished = True
+                        else:
+                                
+                            for arc in graph[stackInx].get_edges():
+                                if not(graph[arc - 1].isExplored()):
+                                    break
+                                else:
+                                    counter+=1
+                                    
+                            if(counter == length):
+                                finished = True
+                            else:
+                                stackInx = arc - 1
+                                graph[stackInx].set_leader(leader)
+                                graph[stackInx].set_explored()
+                                stack.push(stackInx + 1)
+                    
+                    fTime+= 1
+                    graph[stackInx].set_fTime(fTime)
+                    stack.pull()
+                    
+                    if not(stack.isEmpty()):
+                        stackInx = stack.top() - 1
+                        finished = False
+                
+                            
+                            
+            else:
+                fTime = DFS(graph,inx,fTime,leader,size)  #recursive function    
+
+                
+            
 def DFS(graph,inx,fTime,leader,size):
     """
        applies Depth First Search (DFS) given a starting node
@@ -188,7 +261,8 @@ def reverseGraph(graph):
             revGraph[arc - 1].add_edge(nodeNumber)
     
     inx = 0    
-    for vertex in revGraph:
+    #after this point every remaining zero is a sink node
+    for vertex in revGraph: 
         if vertex == 0:
             revGraph[inx] = Node(inx + 1)
         inx+=1
@@ -255,11 +329,9 @@ def retrieveClusters(graph):
        
 ## Testing ###
 
-test = True #change this boolean to disable testing (test = False)
-debug = False  #print intermediate steps
 
 if(test): #choose a graph for testing
-    
+
     nodes = [  #testing graph
                 ['1','4'],
                 ['2','8'],
@@ -272,6 +344,7 @@ if(test): #choose a graph for testing
                 ['8','6'],
                 ['9','3'],
             ]
+"""
     
     nodes = [  #testing graph
                 ['1','2'],
@@ -288,7 +361,8 @@ if(test): #choose a graph for testing
                 ['3','1'],
                
             ]
-    
+
+
     nodes = [ #testing graph
                 ['1','2'],
                 ['2','5'],
@@ -303,34 +377,36 @@ if(test): #choose a graph for testing
                 ['8','9'],
                 ['9','6']
             ]
-    graph = createNodes(nodes)
+"""  
+    useStack = True
+    graph = createGraph(nodes)
     
     print('graph:')
     for node in graph:
         print(node)
        
     revGraph = reverseGraph(graph)
-    DFSloop(revGraph)
-    
     if(debug):
         print('\nreversed graph:')
         for node in revGraph:
             print(node)
-            
+    DFSloop(revGraph,useStack = useStack)
+    
+
     copyInfo(graph,revGraph)
     
     if(debug):
         print('\ncopied graph:')
         for node in graph:
             print(node)
-    
+   
     ordering = topologicList(graph)
     
     if(debug):
         print('\nordered list:')
         print(ordering)
     
-    DFSloop(graph,True, ordering)
+    DFSloop(graph,True, ordering,useStack)
     
     if(debug):
         print('\nclustered graph:')
@@ -344,23 +420,56 @@ if(test): #choose a graph for testing
 
 
 ## Stanford's dataset ###
-        
     
-#with open('graph.txt') as f:
-#    nodes = f.read().splitlines()
-#    
-##preprosesing nodes
-#for i in range(len(nodes)):
-#    nodes[i] = nodes[i].split()    
-#    
-#del i
-#    
-#graph = createNodes(nodes)
-#del nodes
+if(dataset):
+        
+    print('\nopening file...')    
+    with open('graph.txt') as f:
+        nodes = f.read().splitlines()
+    
+    print('\npreprocessing nodes...')        
+    #preprocessing nodes
+    for i in range(len(nodes)):
+        nodes[i] = nodes[i].split()    
+        
+    del i
+    
+    print('\ncreating graph...')         
+    graph = createGraph(nodes)
+    del nodes
+    
+    print('\nreversing graph...')   
+    revGraph = reverseGraph(graph)
+    
+    print('\ncomputing finishing times...')   
+    DFSloop(revGraph, useStack = True)
+    copyInfo(graph,revGraph)
+    
+    print('\ntopological ordering...') 
+    ordering = topologicList(graph)
+    
+    print('\ncomputing clusters...') 
+    DFSloop(graph, True, ordering, useStack = True)
+    clusters =  retrieveClusters(graph) 
+    
+    print('\nstrongly connected components:')
+    print(clusters)
+    
+    print('\ncompute the size of each cluster:')
+    
+    sizes = []
+    
+    for key in clusters:
+        sizes.append(len(clusters[key]))
+    
 
+    sizes.sort(reverse = True)
     
+    print('\nSizes of the five most important strongly connected components:\n')
     
-        
+    for i in range(5):
+        val = sizes[i]
+        print('%d: %d'%((i+1),val))
     
     
     
