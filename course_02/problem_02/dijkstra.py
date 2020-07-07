@@ -6,12 +6,12 @@
 #Implement Dijkstra's Shortest Path Algorithm with a Heap Data structure
 #
 
+## HEADER ###
 import heapq as hp
-import copy
+
 
 class Edge:
-    def __init__(self,startNode,destNode,cost):
-        self.__startNode = startNode
+    def __init__(self,destNode,cost):
         self.__destNode = destNode
         self.__cost = cost
     
@@ -20,30 +20,42 @@ class Edge:
     
     def get_destNode(self):
         return self.__destNode
-    
-    def get_startNode(self):
-        return self.__startNode
-    
-    def __lt__(self,other): #comparison function to use in the heap structure
-        return self.get_cost() < other.get_cost()
+
 
 class Node:
     
     def __init__(self,nodeNumber,edges):
-        self.__nodeNumber = nodeNumber;
-        self.__edges = edges;
+        self.__nodeNumber = nodeNumber
+        self.__edges = edges
+        
+        if (nodeNumber == 1):
+            self.__key = 0
+        else:
+            self.__key = 10e9
 
     def set_nodeNumber(self,number):
-        self.__nodeNumber = number;
+        self.__nodeNumber = number
     
     def add_edge(self,edge):
-        self.__edges.append(edge);
+        self.__edges.append(edge)
     
     def get_edges(self):
         return self.__edges
     
     def get_vertex(self):
         return self.__nodeNumber
+    
+    def get_key(self):
+        return self.__key
+    
+    def set_key(self,value):
+        self.__key =  value
+    
+    def __lt__(self,other): #comparison function to use in the heap structure
+        return self.get_key() < other.get_key()
+    
+    def __eq__(self, other):
+        return self.get_vertex() == other.get_vertex()
     
     def __str__(self):
         pass
@@ -52,44 +64,39 @@ class Graph:
     
     def __init__(self,nodes):
         self.__nodes = nodes
-        self.Xset = set([1]) #explored set of the graph
-#        self.frontier = [10e9]*self.get_size()
-        self.frontier = copy.copy(nodes[0].get_edges())
-        hp.heapify(self.frontier) #I create a heap structure to store the frontier
-    
-    def get_node(self,label):
-        return self.__nodes[label-1]
-    
-    def pop_min_edge(self):
-        return hp.heappop(self.frontier)
-    
-    def add_to_frontier(self,edges):
-        
-        if not(isinstance(edges, list)):
-            raise Exception("input edges are not in a list");
-        
-        for edge in edges:
-            if not(edge.get_destNode() in self.Xset):
-                hp.heappush(self.frontier,edge)
-
+        self.__heap =  nodes[1:]
+        hp.heapify(self.__heap)
     
     def get_size(self):
         return len(self.__nodes)
     
-    def isExplored(self):
-        return self.get_size() == len(self.Xset)
+    def get_nodes(self):
+        return self.__nodes
     
-    def add_to_set(self,label):
-        if(label in self.Xset):
-            raise Exception('something went wrong')
-        self.Xset.add(label)
+    def get_node_edges(self,label):
+        return self.__nodes[label-1].get_edges()
+    
+    def isExplored(self):
+        return len(self.__heap) == 0
+    
+    def node_in_heap(self,label):
+        return Node(label,[]) in self.__heap
+    
+    def update_key(self,label,greedyScore):
 
-    def remove_from_frontier(self,label):
+        if (greedyScore < self.get_node_key(label)):
+            index =  self.__heap.index(Node(label,[]))
+            node = self.__heap.pop(index)            
+            node.set_key(greedyScore)
+            hp.heapify(self.__heap)
+            hp.heappush(self.__heap,node)
+    
+    def get_node_key(self,label):
         
-        for edge in self.frontier:
-            if edge.get_destNode() == label:
-                self.frontier.remove(edge)
-        
+        return self.__nodes[label - 1].get_key()
+    
+    def pop_min(self):
+        return hp.heappop(self.__heap)
         
 def readData(filename):
 
@@ -132,11 +139,12 @@ def data2Graph(parsedData):
                 nodeNumber = int(data[i])
             else:
                 buffer = data[i].split(',')
-                edges.append(Edge(nodeNumber,int(buffer[0]),int(buffer[1])))
+                edges.append(Edge(int(buffer[0]),int(buffer[1])))
         
         nodes.append(Node(nodeNumber,edges))
     
     return Graph(nodes)
+
 
 def shortestPath(graph):
     """
@@ -146,38 +154,42 @@ def shortestPath(graph):
             graph (Graph Object): the input graph you want to calculate its shortest paths
         
         returns:
-            paths (list): Each element of the list is the shortest distance from node 1 to the node (index + 1)
+            for each node in graph, it sets the key attribute equal to the shortest distance from node 1
         
     """
-
-    paths = [0]*graph.get_size()
-    startNode = 1
+    
+    nodeNumber = 1
     
     while not(graph.isExplored()):
-        minEdge = graph.pop_min_edge()
         
-        destNode = minEdge.get_destNode()
-        startNode = minEdge.get_startNode()
-        
-        if not(destNode in graph.Xset):
-        
-            graph.add_to_set(destNode)
-            graph.remove_from_frontier(destNode)
-            dist = minEdge.get_cost()
-            newNode =  graph.get_node(destNode)
+        for edge in graph.get_node_edges(nodeNumber):
             
-            paths[destNode-1] = paths[startNode - 1] + dist
-            graph.add_to_frontier(newNode.get_edges())
+            endpoint = edge.get_destNode()
+           
+            if graph.node_in_heap(endpoint):
         
-    return paths
+                greedyScore = graph.get_node_key(nodeNumber) + edge.get_cost()
+                graph.update_key(endpoint,greedyScore)
         
+        nodeNumber = graph.pop_min().get_vertex()
+
+                
+def getShortestPath(labels,graph):
+    """
+        Given a list of labels, it prints the shortest distance for each vertex.
         
-def getShortestPath(labels,paths):
+        parameters:
+            label (list): a list of labels
+        
+        returns:
+            prints the shortest distance for each vertex, separated by a comma.
+        
+    """
     
     distances = []
-    
+
     for label in labels:
-        distances.append(paths[label-1])
+        distances.append(graph.get_node_key(label))
     
     string = ''
     
@@ -187,18 +199,11 @@ def getShortestPath(labels,paths):
     print(string[:-1])
 
 
+## Implementation ###
+
 parsedData = readData('dijkstraData')
-#parsedData = [['1','2,1','4,5','3,2'],
-#              ['2','5,4','6,11',],
-#              ['3','5,9','6,5','7,16'],
-#              ['4','7,2'],
-#              ['5','8,18'],
-#              ['6','8,13'],
-#              ['7','8,2'],
-#              ['8','1,100000'],
-#                ]
 graph = data2Graph(parsedData)
-paths =  shortestPath(graph)
-getShortestPath([7,37,59,82,99,115,133,165,188,197],paths)
+shortestPath(graph)
+getShortestPath([7,37,59,82,99,115,133,165,188,197],graph)
 
 
