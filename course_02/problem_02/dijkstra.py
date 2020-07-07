@@ -119,7 +119,7 @@ def data2Graph(parsedData):
         parameters:
             parsedData (list): parsed data generated with funcion readData()
         returns:
-            edges (list): a list of Edge objects
+            graph (Graph object): a graph containing the nodes
     '''
     
     nodes = []
