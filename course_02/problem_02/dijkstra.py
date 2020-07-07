@@ -9,7 +9,6 @@
 ## HEADER ###
 import heapq as hp
 
-
 class Edge:
     def __init__(self,destNode,cost):
         self.__destNode = destNode
@@ -21,9 +20,7 @@ class Edge:
     def get_destNode(self):
         return self.__destNode
 
-
 class Node:
-    
     def __init__(self,nodeNumber,edges):
         self.__nodeNumber = nodeNumber
         self.__edges = edges
@@ -61,7 +58,6 @@ class Node:
         pass
 
 class Graph:
-    
     def __init__(self,nodes):
         self.__nodes = nodes
         self.__heap =  nodes[1:]
@@ -92,14 +88,12 @@ class Graph:
             hp.heappush(self.__heap,node)
     
     def get_node_key(self,label):
-        
         return self.__nodes[label - 1].get_key()
     
     def pop_min(self):
         return hp.heappop(self.__heap)
         
 def readData(filename):
-
     '''
         parameters:
             filename (string): Name of the txt file you want to read (without the file extension)
@@ -158,7 +152,7 @@ def shortestPath(graph):
         
     """
     
-    nodeNumber = 1
+    nodeNumber = 1 #start from the source vertex
     
     while not(graph.isExplored()):
         
@@ -197,7 +191,6 @@ def getShortestPath(labels,graph):
         string += str(path) + ','
     
     print(string[:-1])
-
 
 ## Implementation ###
 
