@@ -6,7 +6,7 @@
 #Implement Dijkstra's Shortest Path Algorithm with a Heap Data structure
 #
 
-## HEADER ###
+### HEADER ###
 import heapq as hp
 
 class Edge:
@@ -183,7 +183,10 @@ def getShortestPath(labels,graph):
     
     print(string[:-1])
 
-## Implementation ###
+### END OF HEADER###
+
+
+## IMPLEMENTATION ###
 
 parsedData = readData('dijkstraData')
 graph = data2Graph(parsedData)
