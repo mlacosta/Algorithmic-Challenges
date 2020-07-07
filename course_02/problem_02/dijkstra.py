@@ -33,9 +33,6 @@ class Node:
     def set_nodeNumber(self,number):
         self.__nodeNumber = number
     
-    def add_edge(self,edge):
-        self.__edges.append(edge)
-    
     def get_edges(self):
         return self.__edges
     
@@ -54,9 +51,6 @@ class Node:
     def __eq__(self, other):
         return self.get_vertex() == other.get_vertex()
     
-    def __str__(self):
-        pass
-
 class Graph:
     def __init__(self,nodes):
         self.__nodes = nodes
@@ -79,7 +73,6 @@ class Graph:
         return Node(label,[]) in self.__heap
     
     def update_key(self,label,greedyScore):
-
         if (greedyScore < self.get_node_key(label)):
             index =  self.__heap.index(Node(label,[]))
             node = self.__heap.pop(index)            
@@ -113,7 +106,6 @@ def readData(filename):
         
     return parsedData
 
-
 def data2Graph(parsedData):
     '''
         parameters:
@@ -121,7 +113,6 @@ def data2Graph(parsedData):
         returns:
             graph (Graph object): a graph containing the nodes
     '''
-    
     nodes = []
     
     for data in parsedData:
