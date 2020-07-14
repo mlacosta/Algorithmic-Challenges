@@ -50,16 +50,7 @@ def medianMaintenance(data):
             medians.append(val)
             hp.heappush(maxHeap,-val)
             continue
-        elif not(len(minHeap)):
-            if val< -maxHeap[0]:
-                hp.heappush(minHeap,-hp.heappop(maxHeap))
-                hp.heappush(maxHeap,-val)
-                medians.append(val)
-            else:
-                hp.heappush(minHeap,val)
-                medians.append(-maxHeap[0])
-            continue
-        
+       
         #put in heaps
       
         if val<= -maxHeap[0]:
