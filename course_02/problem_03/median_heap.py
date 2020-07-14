@@ -37,8 +37,6 @@ def medianMaintenance(data):
     """
     minHeap = []
     maxHeap = []
-    hp.heapify(minHeap)
-    hp.heapify(maxHeap)
     medians = []
     
     for val in data:
