@@ -20,7 +20,7 @@ def readData(filename):
     
     with open(filename) as f:
         data = f.read().splitlines()
-    
+        
     for val in data:
         parsedData.append(int(val))
     
@@ -35,44 +35,35 @@ def medianMaintenance(data):
         returns
             medians (list): stream of medians
     """
-    
     minHeap = []
     maxHeap = []
     hp.heapify(minHeap)
     hp.heapify(maxHeap)
-    
     medians = []
     
     for val in data:
-
         #fill the heaps while they are empty
         if not(len(maxHeap)):
             medians.append(val)
             hp.heappush(maxHeap,-val)
             continue
-       
         #put in heaps
-      
         if val<= -maxHeap[0]:
             hp.heappush(maxHeap,-val)
         else:
             hp.heappush(minHeap,val)
-            
         #balance heaps
-        
         if abs(len(maxHeap) - len(minHeap))==2:
             if(len(maxHeap)>len(minHeap)):
                 hp.heappush(minHeap,-hp.heappop(maxHeap))
             else:
                 hp.heappush(maxHeap,-hp.heappop(minHeap))
-        
         #obtain median
-  
         if (len(maxHeap) >= len(minHeap)):
             medians.append(-maxHeap[0])
         else:
             medians.append(minHeap[0])
-        
+            
     return medians
               
 ### END HEADER ###
