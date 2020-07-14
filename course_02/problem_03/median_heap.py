@@ -29,7 +29,7 @@ def readData(filename):
 
 def medianMaintenance(data):
     """
-        computes the median of a stream of integers as they are read in secuencial order
+        computes the median of a stream of integers as they are read.
         parameters: 
             data (list): stream of integers
         returns
