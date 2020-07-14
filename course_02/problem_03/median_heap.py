@@ -42,7 +42,7 @@ def medianMaintenance(data):
     medians = []
     
     for val in data:
-        #fill the heaps while they are empty
+        #first input element
         if not(len(maxHeap)):
             medians.append(val)
             hp.heappush(maxHeap,-val)
