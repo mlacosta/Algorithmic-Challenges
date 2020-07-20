@@ -70,11 +70,11 @@ class HashTable: #unused but functional
 
 def computeTargetValues(data,lowerBound,upperBound):
     """
-        given a list of integers, it computes if it exists
+        Given a list of integers, it computes if it exists
         two distinct values x and y in the list such that 
         x + y lies between a given input interval. It doesn't compute duplicates,
         for instance, if both 3 + 2 = 5 and 4 + 1 = 5 are between the input 
-        interval then it's counted as a single case.
+        interval, then it's counted as a single case.
         
         parameters:
             data (list): list of integers
@@ -108,8 +108,8 @@ def computeTargetValues(data,lowerBound,upperBound):
         if (maxRange > maxVal):
             maxRange = maxVal 
 
-        i = bi.bisect_left(data,minRange)  #find index of closest matcg in O(log(n))
-        j = bi.bisect_left(data,maxRange)  #find index of closest matcg in O(log(n))
+        i = bi.bisect_left(data,minRange)  #find index of closest match in O(log(n))
+        j = bi.bisect_left(data,maxRange)  #find index of closest match in O(log(n))
         
         if (j - i) != 0: #if there exist values that sum a target value
             candidates = data[i:j]
