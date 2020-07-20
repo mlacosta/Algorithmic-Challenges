@@ -102,12 +102,6 @@ def computeTargetValues(data,lowerBound,upperBound):
         if (maxRange < minVal) or (minRange > maxVal):
             continue
         
-        if (minRange < minVal):
-            minRange = minVal
-
-        if (maxRange > maxVal):
-            maxRange = maxVal 
-
         i = bi.bisect_left(data,minRange)  #find index of closest match in O(log(n))
         j = bi.bisect_left(data,maxRange)  #find index of closest match in O(log(n))
         
