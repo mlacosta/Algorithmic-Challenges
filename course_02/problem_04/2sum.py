@@ -3,11 +3,12 @@
 #mail: marianoacosta.003@gmail.com
 #date: July 19th 2020
 #
-#Implement a "2-SUM" finder using a Hash Table 
+#Implement a "2-SUM" finder using a Hash Table (and binary search)
 #
 
 ### HEADER ###
 import heapq as hp
+import bisect as bi
 
 def readData(filename):
     '''
@@ -26,9 +27,7 @@ def readData(filename):
     
     return parsedData
 
-
-
-class HashTable:
+class HashTable: #unused but functional
     
     def __init__(self,buckets):
         self.__buckets = buckets
@@ -69,45 +68,55 @@ class HashTable:
        return self.__hashTable[key-1]
    
 
-def twoSum(data,targetSum,hashTable):
-        
-    for val in data:
-        search = targetSum - val 
-    
-        if search == val: #search only for distinc data
-            continue
-        if (hashTable.find(search)):
-            return True
-    
-    return False
-
 def computeTargetValues(data,lowerBound,upperBound):
-    
-    hashTable = HashTable(250007)
-    hashTable.convertData(data)
-    
-    targetInterval = list(range(lowerBound,upperBound + 1))
-    
-    length = len(targetInterval)
-    
-    counter = 0;
-    iteration = 1
-    
-    table = set(data)
-    
-    targets = set()
-    
-    #calculate all the targets
-    
-    for val in table:
-        for target in targetInterval:
-            targets.add(target - val)
-    
-    
+    """
+        given a list of integers, it computes if it exists
+        two distinct values x and y in the list such that 
+        x + y lies between a given input interval. It doesn't compute duplicates,
+        for instance, if both 3 + 2 = 5 and 4 + 1 = 5 are between the input 
+        interval then it's counted as a single case.
         
-    return targets
-            
+        parameters:
+            data (list): list of integers
+            lowerBound (int): lowest value in the input interval
+            upperBound (int): highest value in the input interval
+        
+        returns:
+            (int): the number distinct sum values (x + y) between the input 
+            interval
+        
+    """
     
+    data = sorted(set(data)) #sort data in O(nlog(n)). Also it removes duplicates
+    
+    minVal = min(data)
+    maxVal = max(data)
+
+    targetSet = set() #here I'll store unique values (x + y) between lowerBound
+                      #and upperBound such that x != y and both of them are in 'data'.
+    
+    for val in data:
+        minRange = lowerBound - val #obtain the range of possible values
+        maxRange = upperBound - val
+        
+        if (maxRange < minVal) or (minRange > maxVal):
+            continue
+        
+        if (minRange < minVal):
+            minRange = minVal
+
+        if (maxRange > maxVal):
+            maxRange = maxVal 
+
+        i = bi.bisect_left(data,minRange)  #find index of closest matcg in O(log(n))
+        j = bi.bisect_left(data,maxRange)  #find index of closest matcg in O(log(n))
+        
+        if (j - i) != 0: #if there exist values that sum a target value
+            candidates = data[i:j]
+            candidates = [x + val for x in candidates]
+            targetSet.update(candidates)
+            
+    return len(targetSet) #cardinality of unique target values
 
 ###Implementation ###
 
@@ -118,7 +127,8 @@ print('* min value in data: %d'%(min(data)))
 print('* size of data: %d\n'%(len(data)))
 
 counter = computeTargetValues(data,-10000,10000)
-#print("Target values in interval: %d"%counter)
+
+print("Target values in interval: %d"%counter)
 
 
 
