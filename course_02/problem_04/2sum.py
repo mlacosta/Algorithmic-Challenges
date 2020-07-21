@@ -82,7 +82,7 @@ def computeTargetValues(data,lowerBound,upperBound):
             upperBound (int): highest value in the input interval
         
         returns:
-            (int): the number distinct sum values (x + y) between the input 
+            (int): the number of distinct sum values (x + y) between the input 
             interval
         
     """
