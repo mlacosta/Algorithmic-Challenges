@@ -58,7 +58,7 @@ class Schedule:
     
     def set_scores(self, option = 'diff'):
         
-        for job in self.__jobs:
+        for job in self.jobs:
                 job.set_score(option)
     
     def get_jobs (self):
@@ -67,6 +67,26 @@ class Schedule:
     def set_schedule(self, option = 'diff'):
         self.set_scores(option)
         self.jobs = sorted(self.jobs, key=lambda a:a.score, reverse=True)  
+        
+        queue = []
+        finalSchedule = []
+        
+        for job in self.jobs:
+            
+            if (len(queue) == 0):
+                queue.append(job)
+            
+            elif (queue[-1].score == job.score):
+                queue.append(job)
+            
+            else:
+                queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
+                finalSchedule += queue
+                queue = []
+        
+        self.jobs = finalSchedule
+            
+            
         
 
             
