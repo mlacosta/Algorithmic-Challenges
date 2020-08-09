@@ -23,10 +23,10 @@ class Job:
     
     def __init__(self,job):
         
-        self.__weight = int(job[0])
-        self.__length = int(job[1])
-        self.__ctime = 0
-        self.__score = None
+        self.weight = int(job[0])
+        self.length = int(job[1])
+        self.ctime = 0
+        self.score = None
     
     def set_ctime(self,prevCt):
         self.__ctime = prevCt + self.__length
@@ -34,40 +34,27 @@ class Job:
     def set_score(self, option = 'diff'):
         
         if option == 'diff':
-            self.__score = self.__weight - self.__length
+            self.score = self.weight - self.length
         elif option == 'ratio':
-            self.__score = self.__weight / self.__length
+            self.score = self.weight / self.length
         else:
             raise Exception("Not a valid option")
      
     def get_weight(self):
-        return self.__weight
+        return self.weight
     
     def get_score(self):
         return self.__score
         
-    def __lt__(self, other):
-      self.__score < other.__score
-    def __le__(self, other):
-      self.__score <= other.__score
-    def __eq__(self, other):
-      self.__score == other.__score
-    def __ne__(self, other):
-      self.__score != other.__score
-    def __gt__(self, other):
-      self.__score > other.__score
-    def __ge__(self, other):
-      self.__score >= other.__score
-
 
 class Schedule:
     
     def __init__(self,jobs):
         
-        self.__jobs = []
+        self.jobs = []
 
         for job in jobs:
-             self.__jobs.append(Job(job))           
+             self.jobs.append(Job(job))           
     
     def set_scores(self, option = 'diff'):
         
@@ -75,22 +62,13 @@ class Schedule:
                 job.set_score(option)
     
     def get_jobs (self):
-        return self.__jobs
+        return self.jobs
     
     def set_schedule(self, option = 'diff'):
         self.set_scores(option)
-        self.__jobs.sort(reverse = True)
+        self.jobs = sorted(self.jobs, key=lambda a:a.score, reverse=True)  
         
-        inx = 0
-        
-        while (inx<len(self.__jobs)):
-            queue = [self.__jobs[inx]]
-            
-            innerInx = inx + 1;
-            
-            while (self.__jobs[innerInx].get_score == self.__jobs[inx].get_score):
-                pass
-            
+
             
     
     
