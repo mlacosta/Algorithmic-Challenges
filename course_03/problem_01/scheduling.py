@@ -40,11 +40,6 @@ class Job:
         else:
             raise Exception("Not a valid option")
      
-    def get_weight(self):
-        return self.weight
-    
-    def get_score(self):
-        return self.__score
         
 
 class Schedule:
@@ -52,6 +47,7 @@ class Schedule:
     def __init__(self,jobs):
         
         self.jobs = []
+        self.weightScore = 0
 
         for job in jobs:
              self.jobs.append(Job(job))           
@@ -74,7 +70,7 @@ class Schedule:
         for job in self.jobs:
             
             if (len(queue) == 0):
-                queue.append(job)
+                queue = [job]
             
             elif (queue[-1].score == job.score):
                 queue.append(job)
@@ -82,13 +78,46 @@ class Schedule:
             else:
                 queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
                 finalSchedule += queue
-                queue = []
+                queue = [job]
+        
+        queue = sorted(queue, key=lambda a:a.weight, reverse=True) 
+        finalSchedule += queue
         
         self.jobs = finalSchedule
-            
-            
+        cumsum = []
         
+        for inx in range(len(self.jobs)):
+            if inx != 0:
+                cumsum.append(cumsum[inx-1] + self.jobs[inx].length)
+            
+            else:
+                cumsum.append(self.jobs[inx].length)
+        
+        for inx in range(len(self.jobs)):
+            self.jobs[inx].ctime = cumsum[inx]
+        
+    
+    def get_score(self):
+        
+        for job in self.jobs:
+            self.weightScore += job.ctime*job.weight
+            
+        return self.weightScore
+            
 
+## IMPLEMENTATION ##
+          
+data = loadJobs('jobs.txt')
+
+
+sch = Schedule(data)
+sch.set_schedule(option = 'diff')
+print(sch.get_score())
+
+
+sch = Schedule(data)
+sch.set_schedule(option = 'ratio')
+print(sch.get_score())
             
     
     
