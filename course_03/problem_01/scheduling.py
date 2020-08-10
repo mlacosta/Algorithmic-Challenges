@@ -40,7 +40,6 @@ class Job:
         else:
             raise Exception("Not a valid option")
      
-        
 
 class Schedule:
     
@@ -68,7 +67,6 @@ class Schedule:
         finalSchedule = []
         
         for job in self.jobs:
-            
             if (len(queue) !=0):
                 if (queue[-1].score != job.score):
                     queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
@@ -76,18 +74,7 @@ class Schedule:
                     queue = []
             
             queue.append(job)
-                
-#            if (len(queue) == 0):
-#                queue = [job]
-#            
-#            elif (queue[-1].score == job.score):
-#                queue.append(job)
-#            
-#            else:
-#                queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
-#                finalSchedule += queue
-#                queue = [job]
-        
+            
         queue = sorted(queue, key=lambda a:a.weight, reverse=True) 
         finalSchedule += queue
         
