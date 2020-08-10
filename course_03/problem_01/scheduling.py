@@ -107,18 +107,15 @@ class Schedule:
 
 ## IMPLEMENTATION ##
           
-data = loadJobs('jobs.txt')
-
-
-sch = Schedule(data)
-sch.set_schedule(option = 'diff')
-print(sch.get_score())
+data = loadJobs('jobs.txt') #load jobs
+sch = Schedule(data) 
+sch.set_schedule(option = 'diff') #obtains an schedule using weight - length as score
+print("The cumulative weighted score with (w - l) is: %d"%(sch.get_score()))
 
 
 sch = Schedule(data)
 sch.set_schedule(option = 'ratio')
-print(sch.get_score())
-            
+print("The cumulative weighted score with (w / l) is: %d"%(sch.get_score())) 
     
     
         
