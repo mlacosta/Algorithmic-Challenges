@@ -69,16 +69,24 @@ class Schedule:
         
         for job in self.jobs:
             
-            if (len(queue) == 0):
-                queue = [job]
+            if (len(queue) !=0):
+                if (queue[-1].score != job.score):
+                    queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
+                    finalSchedule += queue
+                    queue = []
             
-            elif (queue[-1].score == job.score):
-                queue.append(job)
-            
-            else:
-                queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
-                finalSchedule += queue
-                queue = [job]
+            queue.append(job)
+                
+#            if (len(queue) == 0):
+#                queue = [job]
+#            
+#            elif (queue[-1].score == job.score):
+#                queue.append(job)
+#            
+#            else:
+#                queue = sorted(queue, key=lambda a:a.weight, reverse=True)  
+#                finalSchedule += queue
+#                queue = [job]
         
         queue = sorted(queue, key=lambda a:a.weight, reverse=True) 
         finalSchedule += queue
