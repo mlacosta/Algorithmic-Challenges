@@ -8,6 +8,28 @@
 
 ### HEADER ###
 import heapq as hp
+
+class Edge:
+    def __init__(self,endpoint,cost):
+        self.endpoint = endpoint
+        self.cost = cost
+        
+class Node:
+    
+    def __init__(self,idNum,edges):
+        
+        self.edges = []
+        for edge in edges:
+            self.edges.append(Edge(edge[0],edge[1]))    
+        self.id = idNum
+        self.key = 1e9
+        
+    def __lt__(self,other): #comparison function to use in the heap structure
+        return self.key < other.key
+    
+    def __eq__(self, other):
+        return self.key == other.key
+    
      
 def readData(filename):
     '''
@@ -31,16 +53,29 @@ def readData(filename):
 
 def prism(edges,numOfNodes,numOfEdges):
     
-    explored = hp.heapify([])
+    edges = sorted(edges, key = lambda a: a[0])
+    X = set()
+    frontier = []
+    graph = []
+    
+    for inx in range(numOfNodes):
+        graph.append(Node(inx + 1,[a[1:] for a in parsedData if a[0] == (inx+1)]))
+    
+    X.add(1)
+    nextEdges = graph[0].edges.copy()
+    
+    for edge in nextEdges:
+        if graph[edge.endpoint - 1].key > edge.cost:
+            graph[edge.endpoint - 1].key = edge.cost
+        
+    
 
     
-    edges = sorted(edges, key = lambda a: a[0])
-    
-    
-    return graphSize
+              
+    return frontier
 
 
 ### IMPLEMENTATION ###
     
 (parsedData, info) = readData('edges')
-prism(parsedData,info[0],info[1])
+graph = prism(parsedData,info[0],info[1])
