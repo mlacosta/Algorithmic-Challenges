@@ -51,6 +51,21 @@ def readData(filename):
     
     return parsedData, info
 
+def heapDelete(heap,nodeNumber,score):
+    
+    for inx in range(len(heap)):
+        if heap[inx].id == nodeNumber:
+            break
+        
+    node = heap.pop(inx)
+    
+    if node.key > score:
+        node.key = score
+    
+    hp.heapify(heap)
+    hp.heappush(heap,node)
+    
+            
 def prism(edges,numOfNodes,numOfEdges):
     
     edges = sorted(edges, key = lambda a: a[0])
@@ -63,25 +78,8 @@ def prism(edges,numOfNodes,numOfEdges):
         graph.append(Node(inx + 1,[a[1:] for a in parsedData if a[0] == (inx+1)]))
     
     X.add(1)
-    nextNode = graph[0]
-    
-    for edge in nextNode.edges:
-        if edge.endpoint not in X:
-            frontNodes.add(edge.endpoint)
 
-            else:
-                if graph[edge.endpoint - 1].key > edge.cost:
-                    graph[edge.endpoint - 1].key = edge.cost
-        
-    for node in frontNodes:
-        hp.heappush(frontier,graph[node - 1])
-    
-    nextNode = hp.heappop(frontier)
-    X.add(nextNode.id) 
-    frontNodes.remove(nextNode.id)
 
-    
-              
     return frontier
 
 
