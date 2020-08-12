@@ -73,17 +73,48 @@ def prism(edges,numOfNodes,numOfEdges):
     frontNodes = set()
     frontier = []
     graph = []
+    totalCost = 0
     
     for inx in range(numOfNodes):
         graph.append(Node(inx + 1,[a[1:] for a in parsedData if a[0] == (inx+1)]))
     
     X.add(1)
+    
+    inx = 0
+    nextNode = graph[inx]
+    
+    for edge in nextNode.edges:
+        if edge.endpoint not in X:
+            if graph[edge.endpoint - 1].key > edge.cost:
+                graph[edge.endpoint - 1].key = edge.cost
+            frontNodes.add(edge.endpoint)
+    
+    for node in frontNodes:
+        frontier.append(graph[node - 1])
+    
+    hp.heapify(frontier)
+    
+    while (len(frontier) != 0):
+        nextNode = hp.heappop(frontier)
+        totalCost += nextNode.key
+        frontNodes.remove(nextNode.id)
+        X.add(nextNode.id)
+        
+        for edge in nextNode.edges:
+            if edge.endpoint in frontNodes:
+                heapDelete(frontier,edge.endpoint,edge.cost)
+            elif edge.endpoint not in X:
+                if graph[edge.endpoint - 1].key > edge.cost:
+                    graph[edge.endpoint - 1].key = edge.cost
+                hp.heappush(frontier,graph[edge.endpoint - 1])
+                frontNodes.add(edge.endpoint) 
+                   
 
-
-    return frontier
+    return totalCost
 
 
 ### IMPLEMENTATION ###
     
 (parsedData, info) = readData('edges')
-graph = prism(parsedData,info[0],info[1])
+totalCost = prism(parsedData,info[0],info[1])
+print(totalCost)
