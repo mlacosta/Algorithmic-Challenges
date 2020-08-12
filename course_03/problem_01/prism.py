@@ -117,7 +117,5 @@ def prism(edges,numOfNodes,numOfEdges):
 ### IMPLEMENTATION ###
     
 (parsedData, info) = readData('edges')
-parsedData = sorted(parsedData, key = lambda a: a[0])
-
 totalCost = prism(parsedData,info[0],info[1])
 print("MST cost:%d"%totalCost)
