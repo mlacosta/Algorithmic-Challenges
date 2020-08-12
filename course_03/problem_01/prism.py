@@ -76,7 +76,8 @@ def prism(edges,numOfNodes,numOfEdges):
     totalCost = 0
     
     for inx in range(numOfNodes):
-        graph.append(Node(inx + 1,[a[1:] for a in parsedData if a[0] == (inx+1)]))
+        graph.append(Node(inx + 1,[a[1:] for a in parsedData if a[0] == (inx+1)]
+                     + [[a[0],a[2]] for a in parsedData if a[1] == (inx+1)] ))
     
     X.add(1)
     
@@ -116,5 +117,7 @@ def prism(edges,numOfNodes,numOfEdges):
 ### IMPLEMENTATION ###
     
 (parsedData, info) = readData('edges')
+parsedData = sorted(parsedData, key = lambda a: a[0])
+
 totalCost = prism(parsedData,info[0],info[1])
-print(totalCost)
+print("MST cost:%d"%totalCost)
