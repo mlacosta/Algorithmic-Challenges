@@ -80,9 +80,7 @@ def prism(edges,numOfNodes,numOfEdges):
                      + [[a[0],a[2]] for a in parsedData if a[1] == (inx+1)] ))
     
     X.add(1)
-    
-    inx = 0
-    nextNode = graph[inx]
+    nextNode = graph[0]
     
     for edge in nextNode.edges:
         if edge.endpoint not in X:
@@ -110,9 +108,7 @@ def prism(edges,numOfNodes,numOfEdges):
                 hp.heappush(frontier,graph[edge.endpoint - 1])
                 frontNodes.add(edge.endpoint) 
                    
-
     return totalCost
-
 
 ### IMPLEMENTATION ###
     
