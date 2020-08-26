@@ -3,7 +3,7 @@
 #mail: marianoacosta.003@gmail.com
 #date: Aug 26th 2020
 #
-#Implement max-spacing k-clustering using union-find
+#Implement max-spacing k-clustering using disjoint-sets
 
 ### HEADER ###
 def readData(filename):
@@ -29,28 +29,55 @@ class Edge:
         self.__endpoint = element[1]
         self.cost = element[2]
 
-
 class Node:
     def __init__(self,leader,rank):
-        self._leader = leader
-        self._rank = rank
+        self.__leader = leader
+        self.__rank = rank
         
     def set_leader(self,leader):
-        self._leader = leader
+        self.__leader = leader
     
-    def increaseRank(self,leader):
-        self._rank += 1
+    def increaseRank(self):
+        self.__rank += 1
     
     def get_leader(self):
-        return self._leader
+        return self.__leader
     
     def get_rank(self):
-        return self._rank
+        return self.__rank
     
 class Union:
+    '''
+    disjoint-set datastructure
+    '''
     def __init__(self,size):
+        self.nodes = []
         for inx in range(size):
-            pass
+            self.nodes = Node(inx + 1,0)
+
+    def findSet(self,label):
+        leader =  self.nodes[label - 1].get_leader()
+        if leader != label:
+            self.nodes[label - 1].set_leader(self.findSet(leader))
+        return self.nodes[label - 1].get_leader()
+    
+    def link(self,firstNodeLabel,secondNodeLabel):
+        
+        firstNode = self.nodes(firstNodeLabel - 1)
+        secondNode = self.nodes(secondNodeLabel - 1)
+        
+        if firstNode.get_rank() > secondNode.get_rank():
+            secondNode.set_leader() = firstNodeLabel
+        else:
+            firstNode.set_leader() = secondNodeLabel
+            if firstNode.get_rank() == secondNode.get_rank():
+                secondNode.increaseRank()
+    
+    def Union(self,firstNodeLabel,secondNodeLabel):
+        
+        #I assume that the first and second variable are aliasing...
+                
+        
 
 def createEdgeList(parsedData):
     edges = []
@@ -61,7 +88,7 @@ def createEdgeList(parsedData):
     return edges
 
 def clustering(edges,size,k):
-        pass
+        
 ### IMPLEMENTATION ###
             
 (data, info) = readData('clustering1.txt')
