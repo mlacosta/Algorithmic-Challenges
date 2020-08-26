@@ -22,17 +22,17 @@ def readData(filename):
     
     return parsedData, info
 
-
 class Edge:
     def __init__(self,element):
-        self.__source = element[0]
-        self.__endpoint = element[1]
+        self.source = element[0]
+        self.endpoint = element[1]
         self.cost = element[2]
 
 class Node:
     def __init__(self,leader,rank):
         self.__leader = leader
         self.__rank = rank
+        self.__id = leader
         
     def set_leader(self,leader):
         self.__leader = leader
@@ -48,13 +48,21 @@ class Node:
     
 class Union:
     '''
-    disjoint-set datastructure
+    disjoint-set data structure
     '''
     def __init__(self,size):
         self.nodes = []
+        self.__sets = size
         for inx in range(size):
-            self.nodes = Node(inx + 1,0)
-
+            label =  inx + 1
+            self.nodes.append(Node(label,0))
+            
+    def get_sets(self):
+        return self.__sets
+    
+    def decreaseSets(self):
+        self.__sets -= 1
+    
     def findSet(self,label):
         leader =  self.nodes[label - 1].get_leader()
         if leader != label:
@@ -63,21 +71,20 @@ class Union:
     
     def link(self,firstNodeLabel,secondNodeLabel):
         
-        firstNode = self.nodes(firstNodeLabel - 1)
-        secondNode = self.nodes(secondNodeLabel - 1)
+        firstNode = self.nodes[firstNodeLabel - 1]
+        secondNode = self.nodes[secondNodeLabel - 1]
         
         if firstNode.get_rank() > secondNode.get_rank():
-            secondNode.set_leader() = firstNodeLabel
+            secondNode.set_leader(firstNodeLabel)
         else:
-            firstNode.set_leader() = secondNodeLabel
+            firstNode.set_leader(secondNodeLabel)
             if firstNode.get_rank() == secondNode.get_rank():
                 secondNode.increaseRank()
-    
-    def Union(self,firstNodeLabel,secondNodeLabel):
+        #I assume that the first and second variable are aliasings...
         
-        #I assume that the first and second variable are aliasing...
-                
-        
+    def union(self,firstNodeLabel,secondNodeLabel):
+        self.link(self.findSet(firstNodeLabel),self.findSet(secondNodeLabel))
+        self.decreaseSets()
 
 def createEdgeList(parsedData):
     edges = []
@@ -88,8 +95,31 @@ def createEdgeList(parsedData):
     return edges
 
 def clustering(edges,size,k):
-        
+    lazySet = Union(size)
+    
+    while lazySet.get_sets() > k :
+        edge = edges.pop(0)
+        lazySet.union(edge.source,edge.endpoint)
+    
+    return lazySet
 ### IMPLEMENTATION ###
-            
-(data, info) = readData('clustering1.txt')
+
+
+#(data, info) = readData('clustering1.txt')
+
+data = [
+        [1,2,3],
+        [2,3,11],
+        [3,1,12],
+        [1,4,2],
+        [2,4,7],
+        [3,4,3]
+        ]
+
+info = [4]
+
 edges = createEdgeList(data)
+k = 3
+lazySet = clustering(edges,info[0],k)
+nodes = lazySet.nodes
+nodes = sorted(nodes,key = lambda x:x.get_rank(),reverse = True)
