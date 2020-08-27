@@ -46,6 +46,9 @@ class Node:
     def get_rank(self):
         return self.__rank
     
+    def get_id(self):
+        return self.__id
+    
 class Union:
     '''
     disjoint-set data structure
@@ -82,6 +85,7 @@ class Union:
                 secondNode.increaseRank()
         #I assume that the first and second variable are aliasings...
         
+        
     def union(self,firstNodeLabel,secondNodeLabel):
         self.link(self.findSet(firstNodeLabel),self.findSet(secondNodeLabel))
         self.decreaseSets()
@@ -104,22 +108,32 @@ def clustering(edges,size,k):
     return lazySet
 ### IMPLEMENTATION ###
 
+def calculateClusters(nodes):
+    
+    leaders = set()
+    
+    for node in nodes:
+        if node.get_leader() == node.get_id():
+            leaders.add(node.get_id())
+    
+    print(len(leaders))
+            
+(data, info) = readData('clustering1.txt')
 
-#(data, info) = readData('clustering1.txt')
-
-data = [
-        [1,2,3],
-        [2,3,11],
-        [3,1,12],
-        [1,4,2],
-        [2,4,7],
-        [3,4,3]
-        ]
-
-info = [4]
+#small test case, uncomment to try it
+#data = [
+#        [1,2,3],
+#        [2,3,11],
+#        [3,1,12],
+#        [1,4,2],
+#        [2,4,7],
+#        [3,4,3]
+#        ]
+#
+#info = [4]
 
 edges = createEdgeList(data)
-k = 3
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
-nodes = sorted(nodes,key = lambda x:x.get_rank(),reverse = True)
+leaders = calculateClusters(nodes)
+len(leaders)
