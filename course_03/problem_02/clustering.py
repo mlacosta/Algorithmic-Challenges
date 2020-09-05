@@ -116,22 +116,22 @@ def calculateClusters(nodes):
         if node.get_leader() == node.get_id():
             leaders.add(node.get_id())
     
-    print(len(leaders))
+    return leaders
             
 (data, info) = readData('clustering1.txt')
 
 #small test case, uncomment to try it
-#data = [
-#        [1,2,3],
-#        [2,3,11],
-#        [3,1,12],
-#        [1,4,2],
-#        [2,4,7],
-#        [3,4,3]
-#        ]
-#
-#info = [4]
+data = [
+        [1,2,3],
+        [1,3,12],
+        [1,4,2],
+        [2,3,11],
+        [2,4,7],
+        [3,4,3]
+        ]
 
+info = [4]
+k = 4
 edges = createEdgeList(data)
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
