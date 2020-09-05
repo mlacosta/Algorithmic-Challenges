@@ -119,7 +119,7 @@ def calculateClusters(nodes):
     
     return leaders
             
-(data, info) = readData('clustering1.txt')
+(data, info) = readData('question2/input_random_1_4_14.txt')
 
 #small test case, uncomment to try it
 #data = [
