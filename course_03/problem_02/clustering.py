@@ -68,9 +68,11 @@ class Union:
     
     def findSet(self,label):
         leader =  self.nodes[label - 1].get_leader()
-        if leader != label:
+        if leader == label:
+            return label
+        else:
             self.nodes[label - 1].set_leader(self.findSet(leader))
-        return self.nodes[label - 1].get_leader()
+            return self.nodes[label - 1].get_leader()
     
     def link(self,firstNodeLabel,secondNodeLabel):
         
@@ -84,7 +86,6 @@ class Union:
             if firstNode.get_rank() == secondNode.get_rank():
                 secondNode.increaseRank()
         #I assume that the first and second variable are aliasings...
-        
         
     def union(self,firstNodeLabel,secondNodeLabel):
         self.link(self.findSet(firstNodeLabel),self.findSet(secondNodeLabel))
@@ -121,19 +122,19 @@ def calculateClusters(nodes):
 (data, info) = readData('clustering1.txt')
 
 #small test case, uncomment to try it
-data = [
-        [1,2,3],
-        [1,3,12],
-        [1,4,2],
-        [2,3,11],
-        [2,4,7],
-        [3,4,3]
-        ]
-
-info = [4]
+#data = [
+#        [1,2,3],
+#        [1,3,12],
+#        [1,4,2],
+#        [2,3,11],
+#        [2,4,7],
+#        [3,4,3]
+#        ]
+#
+#info = [4]
 k = 4
 edges = createEdgeList(data)
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
 leaders = calculateClusters(nodes)
-len(leaders)
+nodes = sorted(nodes, key = lambda x: x.get_rank(),reverse= True)
