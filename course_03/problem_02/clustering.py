@@ -68,11 +68,9 @@ class Union:
     
     def findSet(self,label):
         leader =  self.nodes[label - 1].get_leader()
-        if leader == label:
-            return label
-        else:
+        if leader != label:
             self.nodes[label - 1].set_leader(self.findSet(leader))
-            return self.nodes[label - 1].get_leader()
+        return self.nodes[label - 1].get_leader()
     
     def link(self,firstNodeLabel,secondNodeLabel):
         
@@ -103,8 +101,10 @@ def clustering(edges,size,k):
     lazySet = Union(size)
     
     while lazySet.get_sets() > k :
+        
         edge = edges.pop(0)
-        lazySet.union(edge.source,edge.endpoint)
+        if not (lazySet.findSet(edge.source) == lazySet.findSet(edge.endpoint)):
+            lazySet.union(edge.source,edge.endpoint)
     
     return lazySet
 ### IMPLEMENTATION ###
@@ -118,8 +118,12 @@ def calculateClusters(nodes):
             leaders.add(node.get_id())
     
     return leaders
+
+def calculateDistance(source,endpoint,edges,numOfNodes):
+    index = int((source - 1)*(numOfNodes-source/2) + (endpoint - source) -1)
+    
             
-(data, info) = readData('question2/input_random_1_4_14.txt')
+(data, info) = readData('question1/input_completeRandom_1_8.txt')
 
 #small test case, uncomment to try it
 #data = [
@@ -132,7 +136,7 @@ def calculateClusters(nodes):
 #        ]
 #
 #info = [4]
-k = 4
+k = 3
 edges = createEdgeList(data)
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
