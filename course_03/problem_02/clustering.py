@@ -119,11 +119,22 @@ def calculateClusters(nodes):
     
     return leaders
 
-def calculateDistance(source,endpoint,edges,numOfNodes):
+def calculateDistance(source,endpoint,data,numOfNodes):
     index = int((source - 1)*(numOfNodes-source/2) + (endpoint - source) -1)
+    return data[index][2]
+    
+def maxDistance(edges,lazySet):
+    size = len(edges)
+    for i in range(size):
+        firstLeader = lazySet.findSet(edges[i].source)
+        secondLeader = lazySet.findSet(edges[i].endpoint)
+    
+        if (firstLeader != secondLeader):
+            return edges[i].cost
     
             
-(data, info) = readData('question1/input_completeRandom_1_8.txt')
+    
+(data, info) = readData('question1\input_completeRandom_1_8.txt')
 
 #small test case, uncomment to try it
 #data = [
@@ -136,9 +147,10 @@ def calculateDistance(source,endpoint,edges,numOfNodes):
 #        ]
 #
 #info = [4]
-k = 3
+k = 4
 edges = createEdgeList(data)
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
 leaders = calculateClusters(nodes)
 nodes = sorted(nodes, key = lambda x: x.get_rank(),reverse= True)
+print(maxDistance(edges,lazySet))
