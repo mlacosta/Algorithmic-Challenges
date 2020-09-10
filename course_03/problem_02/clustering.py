@@ -132,7 +132,6 @@ def maxDistance(edges,lazySet):
         if (firstLeader != secondLeader):
             return edges[i].cost
     
-
 def uniqueValues(data):
     
     values = set()
@@ -156,10 +155,12 @@ def uniqueValues(data):
 #        ]
 #
 
-k = 4
-edges = createEdgeList(data)
-lazySet = clustering(edges,info[0],k)
-nodes = lazySet.nodes
-leaders = calculateClusters(nodes)
-nodes = sorted(nodes, key = lambda x: x.get_rank(),reverse= True)
-print("Maximum distance between clusters: %d"%maxDistance(edges,lazySet))
+#uncomment the code bellow to run the scrpt
+
+#k = 4
+#edges = createEdgeList(data)
+#lazySet = clustering(edges,info[0],k)
+#nodes = lazySet.nodes
+#leaders = calculateClusters(nodes)
+#nodes = sorted(nodes, key = lambda x: x.get_rank(),reverse= True)
+#print("Maximum distance between clusters: %d"%maxDistance(edges,lazySet))
