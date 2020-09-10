@@ -110,7 +110,6 @@ def clustering(edges,size,k):
 
 
 def calculateClusters(nodes):
-    
     leaders = set()
     
     for node in nodes:
@@ -132,14 +131,6 @@ def maxDistance(edges,lazySet):
         if (firstLeader != secondLeader):
             return edges[i].cost
     
-def uniqueValues(data):
-    
-    values = set()
-    for num in data:
-        values.add(bin2dec(num,23))
-    
-    return values
-
 
 ### IMPLEMENTATION ###
 (data, info) = readData('clustering1.txt')

@@ -28,10 +28,8 @@ def decList(data,size):
     return numbers
 
 def createHashMap(data):
-    
     size = len(data)
     hashMap = {}
-    
     for inx in range(size):
         key = data[inx]
         if key in hashMap:
@@ -42,8 +40,8 @@ def createHashMap(data):
     return hashMap
 
 def create_hamming_mask(size):
+    #1-bit mask
     dist1 = [1 << i for i in range(size)]
-    
     #2-bits mask
     dist2 = set()
     
@@ -59,7 +57,6 @@ def create_hamming_mask(size):
 def clustering(data,masks,numOfNodes):
     
     lazySet = ctr.Union(numOfNodes)
-    
     for mask in masks:    
         for key in data.keys():
             search = xor(key,mask)
