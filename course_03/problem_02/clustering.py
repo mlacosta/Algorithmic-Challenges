@@ -107,7 +107,7 @@ def clustering(edges,size,k):
             lazySet.union(edge.source,edge.endpoint)
     
     return lazySet
-### IMPLEMENTATION ###
+
 
 def calculateClusters(nodes):
     
@@ -132,9 +132,18 @@ def maxDistance(edges,lazySet):
         if (firstLeader != secondLeader):
             return edges[i].cost
     
-            
+
+def uniqueValues(data):
     
-(data, info) = readData('question1\input_completeRandom_1_8.txt')
+    values = set()
+    for num in data:
+        values.add(bin2dec(num,23))
+    
+    return values
+
+
+### IMPLEMENTATION ###
+(data, info) = readData('clustering1.txt')
 
 #small test case, uncomment to try it
 #data = [
@@ -146,11 +155,11 @@ def maxDistance(edges,lazySet):
 #        [3,4,3]
 #        ]
 #
-#info = [4]
+
 k = 4
 edges = createEdgeList(data)
 lazySet = clustering(edges,info[0],k)
 nodes = lazySet.nodes
 leaders = calculateClusters(nodes)
 nodes = sorted(nodes, key = lambda x: x.get_rank(),reverse= True)
-print(maxDistance(edges,lazySet))
+print("Maximum distance between clusters: %d"%maxDistance(edges,lazySet))
