@@ -1,11 +1,10 @@
 #Author: Mariano Leonel Acosta
 #Github: mlacosta
 #mail: marianoacosta.003@gmail.com
-#date: Sep  28th 2020
+#date: Sep  29th 2020
 #
-#Huffman encoding with greedy algorithm
+#Maximum Weight Independent Set with Dynamic Programming
 
-#I use a heap for min search and Depth First Search for encoding
 
 ### HEADER ###
 def read_data(file):
