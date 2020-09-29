@@ -18,18 +18,9 @@ def read_data(file):
     info = parsed_data.pop(0)
     return (info , parsed_data)
 
-class Symbol:
-    def __init__(self,index,weight):
-        self.symbol = str(index)
-        self.weight  = weight
-
-    def __lt__(self,other):
-        return self.weight < other.weight
-    
-    def __str__(self):
-        return self.symbol
 class Node:
-    def __init__(self, symbol = None, label = None,left = None ,right = None, depth = 0, weight = None):
+    def __init__(self, symbol = None, label = None,left = None ,right = None, 
+                 depth = 0, weight = None, parent = None):
         self.label = label
         self.left = left
         self.right = right
@@ -37,6 +28,7 @@ class Node:
         self.__explored = False
         self.depth = depth
         self.weight = weight
+        self.parent = parent
     
     def is_explored(self):
         return self.__explored
@@ -53,17 +45,14 @@ class Node:
     def increase_depth(self):
         self.depth += 1
 
-def to_symbol(el):
-    return Symbol(el[0],el[1])
-
 def merge(a,b):
-    a.label = '0'
-    b.label = '1'
-    
+    a.label = '1'
+    b.label = '0'
     ab = Node(weight = a.weight + b.weight, 
-              left = a,
-              right  = b)
-    
+              left = b,
+              right  = a)
+    a.parent = ab
+    b.parent = ab
     return ab
      
 def huffman(epsilon):
@@ -74,13 +63,36 @@ def huffman(epsilon):
         ab = merge(a,b)
         hp.heappush(epsilon,ab)
         
-def decode(tree,symbol):
-    pass
+def backtrack(node):
+    codeword = ''
+    val = node
+    
+    while val.parent != None:
+        codeword = val.label + codeword
+        val = val.parent
+    
+    return codeword
+    
+def DFS_decode(tree,symbol):
+    tree.set_explored()
 
-  
+    if tree.symbol == symbol:
+        print('found')
+        print(backtrack(tree))
+    
+    if not(tree.right == None):
+        if not tree.right.is_explored():
+            DFS_decode(tree.right,symbol)
+            
+    if not(tree.left == None):
+        if not tree.left.is_explored():
+            DFS_decode(tree.left,symbol)
+
+
 ### IMPLEMENTATION ###
 info, data = read_data('huffman.txt')
-data = [3,2,6,8,2,6]
 epsilon = list(map(lambda el: Node(weight = el[1],symbol = str(el[0])),list(enumerate(data))))
 hp.heapify(epsilon)
 huffman(epsilon)    
+tree = epsilon[0]
+DFS_decode(tree,'342')
