@@ -29,13 +29,14 @@ class Symbol:
     def __str__(self):
         return self.symbol
 class Node:
-    def __init__(self, symbol = None, label = None,left = None ,right = None, depth = 0):
+    def __init__(self, symbol = None, label = None,left = None ,right = None, depth = 0, weight = None):
         self.label = label
         self.left = left
         self.right = right
         self.symbol = symbol
         self.__explored = False
         self.depth = depth
+        self.weight = weight
     
     def is_explored(self):
         return self.__explored
@@ -45,6 +46,12 @@ class Node:
         
     def __str__(self):
         return 'Label: %s, Symbol: %s Depth: %s'%(self.label,self.symbol,self.depth)
+
+    def __lt__(self,other):
+        return self.weight < other.weight
+    
+    def increase_depth(self):
+        self.depth += 1
 
 def to_symbol(el):
     return Symbol(el[0],el[1])
@@ -60,59 +67,37 @@ def create_node(s_tree, label, depth = 0):
         left = Node(symbol = s_tree[0], label = '0',depth = depth + 2)
         right = create_node(s_tree[1:],label = '1',depth = depth + 1)
         return Node(left=left, right=right, label = label, depth = depth + 1)
+
+def merge(a,b):
+    a.label = '0'
+    b.label = '1'
     
-def decompress(tree):
-    s_left = tree.left.symbol.split()
-    s_right = tree.right.symbol.split()
-    left = create_node(s_left,'0', depth = 0)
-    right = create_node(s_right, '1', depth = 0)
+    ab = Node(symbol = a.symbol + ' ' + b.symbol, 
+              weight = a.weight + b.weight, 
+              left = a,
+              right  = b)
     
-    return Node(left=left, right=right)
+    return ab
      
 def huffman(epsilon):
-    print('----')
-    for s in epsilon:
-        print(s)
     
-    if len(epsilon) == 2:
-        left = Node(symbol = epsilon[1].symbol, label = '0')
-        right = Node(symbol = epsilon[0].symbol, label = '1')
-        return Node(left=left,right=right)
-    
-    a = hp.heappop(epsilon)
-    b = hp.heappop(epsilon)
-    
-    ab = Symbol(a.symbol + ' ' + b.symbol,a.weight + b.weight)
-    
+    while(len(epsilon) > 2):
+        a = hp.heappop(epsilon)
+        b = hp.heappop(epsilon)
+        ab = merge(a,b)
+        hp.heappush(epsilon,ab)
+        
+    a = epsilon[0]
+    b = epsilon[1]
+    return merge(a,b) 
 
 
-    hp.heappush(epsilon,ab)
-    tree = huffman(epsilon)
-    
-    return tree    
+def decode(tree,symbol):
+    pass
 
-def DFS(encoding,symbol, max_depth = 0):
-    
-    encoding.set_explored()
-    
-    if encoding.symbol == symbol:
-        print("Symbol found, depth = %d"%encoding.depth)
-        return
-    
-    if not(encoding.right == None):
-        if not(encoding.right.is_explored() and (encoding.right.symbol == None)):
-            DFS(encoding.right,symbol)
-    
-    if not(encoding.left == None):
-        if not(encoding.left.is_explored() and (encoding.left.symbol == None)):
-            DFS(encoding.left,symbol)
-    
-    return
-    
+  
 ### IMPLEMENTATION ###
 info, data = read_data('huffman.txt')
-data = [3,2,6,8,2,6]
-epsilon = list(map(lambda el: Symbol(el[0],el[1]),list(enumerate(data))))
+epsilon = list(map(lambda el: Node(weight = el[1],symbol = str(el[0])),list(enumerate(data))))
 hp.heapify(epsilon)
 tree = huffman(epsilon)    
-encoding  = decompress(tree)
