@@ -19,35 +19,28 @@ def opt_bst(values):
             values (list): input probabilities
         
         Returns:
-            the optimal cost, i.e: 
+            the optimal cost, i.e: the avg search time
     '''
     
     n = len(values) 
     A = np.zeros((n + 1 )**2).reshape(n + 1 ,n + 1 )
     
     for s in range(n):
-        
         for i in range(n):
-            
             inx = i + s + 1
             inx =  inx  if (inx < n) else n
-            
             cost = 10e9
             
             for r in range(i,inx):
                 temp = 0
-                
                 first = 0 if (i > inx) else A[i,r-1]
-
                 second = 0 if ( (r + 1) > ( inx -1 ) ) else A[r+1,inx-1]
-                
                 sum_pk = 0
                 
                 for k in range(i,inx):
                     sum_pk += values[k]
                 
                 temp = sum_pk + first + second
-                
                 cost = temp if temp<cost else cost
             
             A[i,inx-1] = cost
