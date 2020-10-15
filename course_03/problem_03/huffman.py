@@ -90,4 +90,4 @@ epsilon = list(map(lambda el: Node(weight = el[1],symbol = str(el[0])),list(enum
 hp.heapify(epsilon)
 huffman(epsilon)    
 tree = epsilon[0]
-DFS_decode(tree,'0')
+DFS_decode(tree,'147')
