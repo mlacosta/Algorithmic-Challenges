@@ -1,11 +1,10 @@
 #Author: Mariano Leonel Acosta
 #Github: mlacosta
 #mail: marianoacosta.003@gmail.com
-#date: Sep  28th 2020
+#date: Oct  15th 2020
 #
-#Huffman encoding with greedy algorithm
+#Knapsack optimization problem
 
-#I use a heap for min search and Depth First Search for encoding
 
 ### HEADER ###
 import numpy as np
@@ -46,3 +45,4 @@ def knapsack(capacity ,size, data):
         
 (capacity ,size), data = read_data('knapsack1.txt')
 A = knapsack(capacity ,size, data)
+
